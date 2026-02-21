@@ -34,8 +34,89 @@ applyPhosphor:
     movl    %esp, %ebp                  
 
     # TODO
+    # Arguments
+    # p = 8(%ebp)    -> adresse du pixel (Pixel)
+    # subpixel = 12(%ebp)
+
+    movl 8(%ebp), %esi          # esi = &p
+    movl 12(%ebp), %ecx         # ecx = subpixel
+
+    cmpl $0, %ecx
+    je rouge_dominant
+    cmpl $1, %ecx
+    je vert_dominant
+    jmp bleu_dominant
+
+    rouge_dominant:
+
+        # Modifier vert
+        movl factor, %ebx
+        movzbl 1(%esi), %eax        # même logique que dans applyScanline
+        imull %ebx, %eax            
+        movl $0, %edx               
+        movl percent_conversion, %ebx
+        idivl %ebx                  
+        movb %al, 1(%esi)   
+
+        # Modifier bleu
+        movl factor, %ebx
+        movzbl 2(%esi), %eax        
+        imull %ebx, %eax            
+        movl $0, %edx               
+        movl percent_conversion, %ebx
+        idivl %ebx                  
+        movb %al, 2(%esi)  
+
+        jmp Fin
+
+    vert_dominant:
+
+        # Modifier rouge
+        movl factor, %ebx
+        movzbl (%esi), %eax        
+        imull %ebx, %eax            
+        movl $0, %edx               
+        movl percent_conversion, %ebx
+        idivl %ebx                  
+        movb %al, (%esi)           
+
+        # Modifier bleu
+        movl factor, %ebx
+        movzbl 2(%esi), %eax        
+        imull %ebx, %eax            
+        movl $0, %edx               
+        movl percent_conversion, %ebx
+        idivl %ebx                  
+        movb %al, 2(%esi)  
+
+        jmp Fin
+
+    bleu_dominant:
+
+        # Modifier rouge
+        movl factor, %ebx
+        movzbl (%esi), %eax        
+        imull %ebx, %eax            
+        movl $0, %edx               
+        movl percent_conversion, %ebx
+        idivl %ebx                  
+        movb %al, (%esi)           
+
+        # Modifier vert
+        movl factor, %ebx
+        movzbl 1(%esi), %eax        
+        imull %ebx, %eax            
+        movl $0, %edx               
+        movl percent_conversion, %ebx
+        idivl %ebx                  
+        movb %al, 1(%esi)  
+
+        jmp Fin
+
+
 
     # epilogue
-    leave 
-    ret   
+    Fin:
+        leave 
+        ret   
 
