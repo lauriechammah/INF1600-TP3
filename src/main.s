@@ -13,7 +13,7 @@
 .data 
 
 inputCrt: 
-    .asciz "images/image.png"
+    .asciz "images/johnpork.png"
 
 outputCrt:
     .asciz "crt.png"
@@ -33,12 +33,34 @@ main:
     #################### Filtre CRT #######################
 
     # TODO: Charger l'image inputCrt en appelant loadImage()
+    subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
+
+    leal -12(%ebp), %eax        # eax = &imageCRT
+    pushl %eax                  # 2e argument : pointeur vers img
+    pushl $inputCrt             # 1er argument : filename
+    call loadImage
+    addl $8, %esp
 
     # TODO: Appliquer le filtre crtFilter() sur cette image
+    pushl $3                    # 2e argument : scanlineSpacing = 3
+    leal -12(%ebp), %eax        # eax = &imageCRT
+    pushl %eax                  # 1er argument : img
+    call crtFilter
+    addl $8, %esp
 
     # TODO: Sauvegarder cette image dans le fichier outputCrt avec saveImage()
+    leal -12(%ebp), %eax        # eax = &imageCRT
+    pushl %eax                  # 2e argument : pointeur vers img
+    pushl $outputCrt            # 1er argument : filename
+    call saveImage
+    addl $8, %esp
 
     # TODO: Libérer la mémoire de vos images avec freeImage()
+    leal -12(%ebp), %eax
+    pushl %eax                  # 1er argument : img
+    call freeImage
+    addl $4, %esp
+
 
     #################### Triangle de Sierpinski #######################
 

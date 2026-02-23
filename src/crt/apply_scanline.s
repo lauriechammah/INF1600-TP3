@@ -26,6 +26,11 @@ applyScanline:
     # p = 8(%ebp)    -> adresse du pixel (Pixel)
     # percent = 12(%ebp)
 
+
+    pushl %ebx
+    pushl %edi
+    pushl %esi
+
     movl 8(%ebp), %esi          # esi = &p
     movl 12(%ebp), %ecx         # ecx = percent
 
@@ -56,6 +61,12 @@ applyScanline:
     ####### A est ignoré #######
     
     # epilogue
+
+
+    popl %esi
+    popl %edi
+    popl %ebx
+
     leave 
     ret   
 
