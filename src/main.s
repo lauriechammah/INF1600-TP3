@@ -67,13 +67,39 @@ main:
 
     # TODO: Créer une image vide de taille d'une puissance de 2 en appelant createImage()
     # Puisque createImage() retourne une struct Image, il faut d’abord allouer de l’espace sur la pile pour l’image, puit push l’adresse de cet espace comme 3e paramètre avant de call la fonction.
+    
+    subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
+    leal -12(%ebp), %eax        # Adresse de l'espace alloué : eax = &imageCRT              OU utiliser %esp, %eax ????? idk, whatever <3
+    pushl %eax                  # 3e paramètre : adresse de l'image
+    pushl $1024                 # 2e paramètre : hauteur
+    pushl $1024                 # 1e paramètre : largeur
+    
+    call createImage()
+    addl $12, %esp              # 3 param. x 4 octets = 12
 
     # TODO: Dessiner le triangle de Sierpinski avec la fonction récursive sierpinskiImage()
-
+    leal -12(%ebp), %eax        # eax = &imageCRT
+    
+    pushl color
+    pushl %eax                  # adresse de l'image
+    pushl $1024                 # size (taille de l'image)
+    pushl $0                    # y = 0
+    pushl $0                    # x = 0
+    call sierpinskiImage()
+    addl $20, %esp              # 5 paramètres x 4 bytes = 20
+    
     # TODO: Sauvegarder cette image dans le fichier outputSierpinski avec saveImage()
+    leal -12(%ebp), %eax        # eax = &imageCRT
+    pushl %eax                  # 2e argument : pointeur vers img
+    pushl $outputSierpinski     # 1er argument : filename
+    call saveImage
+    addl $8, %esp
 
     # TODO: Libérer la mémoire de vos images avec freeImage()
-
+    leal -12(%ebp), %eax
+    pushl %eax                  # 1er argument : img
+    call freeImage
+    addl $4, %esp
 
 
 
