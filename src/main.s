@@ -21,6 +21,9 @@ outputCrt:
 outputSierpinski:
     .asciz "sierpinski.png"
 
+.align 4
+color:
+    .byte 227, 171, 59, 255
 
 .text 
 .globl main                      
