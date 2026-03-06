@@ -77,7 +77,7 @@ main:
     pushl $1024                 # 2e paramètre : hauteur
     pushl $1024                 # 1e paramètre : largeur
     
-    call createImage()
+    call createImage
     addl $12, %esp              # 3 param. x 4 octets = 12
 
     # TODO: Dessiner le triangle de Sierpinski avec la fonction récursive sierpinskiImage()
@@ -88,7 +88,7 @@ main:
     pushl $1024                 # size (taille de l'image)
     pushl $0                    # y = 0
     pushl $0                    # x = 0
-    call sierpinskiImage()
+    call sierpinskiImage
     addl $20, %esp              # 5 paramètres x 4 bytes = 20
     
     # TODO: Sauvegarder cette image dans le fichier outputSierpinski avec saveImage()
