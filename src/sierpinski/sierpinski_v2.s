@@ -89,15 +89,15 @@ sierpinskiImage:
         addl $20, %esp          # 5 paramètres x 4 bytes = 20
         
         # Triangle en bas à droite
-        movl -4(%ebp), %edx     # %edx = half
+        movl -4(%ebp), %edx     # edx = half (dé-pile)
         movl %edi, %ecx         # ecx = x
         addl %edx, %ecx         # x += half
 
         movl %ebx, %eax         # eax = y
         addl %edx, %eax         # eax = y + half
         
-        pushl 24(%ebp)          # color
-        pushl 20(%ebp)          # img
+        pushl 28(%ebp)          # color (24 + 4)
+        pushl 24(%ebp)          # img (20 + 4)
         pushl %edx              # half
         pushl %eax              # y + half
         pushl %ecx              # x + half
@@ -105,17 +105,20 @@ sierpinskiImage:
         addl $20, %esp
         
         # Triangle du haut
+        movl -4(%ebp), %edx     # edx = half (dé-pile)
         movl %edx, %eax         # eax = half
         shrl $1, %eax           # eax = half / 2
         addl %eax, %edi         # x += half / 2
         
-        pushl 24(%ebp)          # color
-        pushl 20(%ebp)          # img
+        pushl 28(%ebp)          # color (24 + 4)
+        pushl 24(%ebp)          # img (20 + 4)
         pushl %edx              # half
         pushl %ebx              # y
         pushl %edi              # x + half/2
         call sierpinskiImage
         addl $20, %esp
+
+        addl $4, %esp           # dé-pile half ajouté au début
         
     fin:
         # epilogue
