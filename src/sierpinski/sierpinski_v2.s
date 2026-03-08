@@ -74,21 +74,22 @@ sierpinskiImage:
     recursion:
         # diviser size
         shrl $1, %eax           # eax / 2 (donc half = size / 2)
-        movl %eax, %edx
+        pushl %eax              # sauvegarder half sur la pile (-4 par rapport au esp courant)
     
         # Triangle en bas à gauche
         movl %ebx, %ecx         # ecx = y
-        addl %edx, %ecx         # y += half
+        addl %eax, %ecx         # y += half
         
-        pushl 24(%ebp)          # color
-        pushl 20(%ebp)          # img
-        pushl %edx              # half
+        pushl 28(%ebp)          # color (24 + 4)
+        pushl 24(%ebp)          # img (20 + 4)
+        pushl %eax              # half
         pushl %ecx              # y + half
         pushl %edi              # x
         call sierpinskiImage
         addl $20, %esp          # 5 paramètres x 4 bytes = 20
         
         # Triangle en bas à droite
+        movl -4(%ebp), %edx     # %edx = half
         movl %edi, %ecx         # ecx = x
         addl %edx, %ecx         # x += half
 
