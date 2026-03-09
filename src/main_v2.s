@@ -33,7 +33,7 @@ main:
     pushl   %ebp                      
     movl    %esp, %ebp                  
 
-    subl $24, %esp              # alloué de l'espace pour deux images dès le début (2 x 12 octets)
+    subl $32, %esp              # alloué de l'espace pour deux images dès le début (2 x 12 octets)
                                 # Image CRT : -12(%ebp)
                                 # Image Triangle : -24(%ebp)
     #################### Filtre CRT #######################
@@ -70,23 +70,23 @@ main:
 
     #################### Triangle de Sierpinski #######################
 
-
     # TODO: Créer une image vide de taille d'une puissance de 2 en appelant createImage()
     # Puisque createImage() retourne une struct Image, il faut d’abord allouer de l’espace sur la pile pour l’image, puit push l’adresse de cet espace comme 3e paramètre avant de call la fonction.
     
     # subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
     # movl %esp, %eax              # Adresse de l'espace alloué : eax = &imageCRT
 
-    leal -24(%ebp), %eax
-    pushl %eax                  # 3e paramètre : adresse de l'image
+    subl $4, %esp
+    leal -20(%ebp), %eax
     pushl $1024                 # 2e paramètre : hauteur
     pushl $1024                 # 1e paramètre : largeur
+    pushl %eax                  # argument caché : adresse de l'image (de retour)
     
     call createImage
     addl $12, %esp              # 3 param. x 4 octets = 12
 
     # TODO: Dessiner le triangle de Sierpinski avec la fonction récursive sierpinskiImage()
-    leal -24(%ebp), %eax        # eax = &imageCRT
+    leal -20(%ebp), %eax        # eax = &imageCRT
     pushl color
     pushl %eax                  # adresse de l'image
     pushl $1024                 # size (taille de l'image)
@@ -96,30 +96,19 @@ main:
     addl $20, %esp              # 5 paramètres x 4 bytes = 20
     
     # TODO: Sauvegarder cette image dans le fichier outputSierpinski avec saveImage()
-    leal -24(%ebp), %eax        # eax = &imageCRT
+    leal -20(%ebp), %eax        # eax = &imageCRT
     pushl %eax                  # 2e argument : pointeur vers img
     pushl $outputSierpinski     # 1er argument : filename
     call saveImage
     addl $8, %esp
 
     # TODO: Libérer la mémoire de vos images avec freeImage()
-    leal -24(%ebp), %eax
+    leal -20(%ebp), %eax
     pushl %eax                  # 1er argument : img
     call freeImage
     addl $4, %esp
-
-
 
     movl    $0, %eax
     # epilogue
     leave 
     ret 
-
-cat > /tmp/test.cpp << 'EOF'
-#include "../include/image.h"
-void test() {
-    Image img = createImage(1024, 1024);
-}
-EOF
-g++ -m32 -S -o /tmp/test.s /tmp/test.cpp -I include
-cat /tmp/test.s
