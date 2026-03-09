@@ -85,8 +85,9 @@ main:
     addl $12, %esp              # 3 param. x 4 octets = 12
 
     # TODO: Dessiner le triangle de Sierpinski avec la fonction récursive sierpinskiImage()
-    movl color, %eax
-    pushl %eax
+    # movl color, %eax
+    # pushl %eax
+    pushl color
 
     leal -24(%ebp), %eax        # eax = &imageSierpinski
     pushl %eax                  # adresse de l'image
