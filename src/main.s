@@ -33,10 +33,12 @@ main:
     pushl   %ebp                      
     movl    %esp, %ebp                  
 
+    subl $24, %esp              # alloué de l'espace pour deux images dès le début (2 x 12 octets)
+                                # Image CRT : -12(%ebp)
+                                # Image Triangle : -24(%ebp)
     #################### Filtre CRT #######################
 
     # TODO: Charger l'image inputCrt en appelant loadImage()
-    subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
 
     leal -12(%ebp), %eax        # eax = &imageCRT
     pushl %eax                  # 2e argument : pointeur vers img
@@ -67,24 +69,24 @@ main:
 
     #################### Triangle de Sierpinski #######################
 
-
     # TODO: Créer une image vide de taille d'une puissance de 2 en appelant createImage()
     # Puisque createImage() retourne une struct Image, il faut d’abord allouer de l’espace sur la pile pour l’image, puit push l’adresse de cet espace comme 3e paramètre avant de call la fonction.
-    
-    subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
-    leal -12(%ebp), %eax        # Adresse de l'espace alloué : eax = &imageCRT              OU utiliser %esp, %eax ????? idk, whatever <3
-    pushl %eax                  # 3e paramètre : adresse de l'image
+
+    leal -24(%ebp), %eax        # eax = &imageSierpinski
     pushl $1024                 # 2e paramètre : hauteur
     pushl $1024                 # 1e paramètre : largeur
+    pushl %eax                  # Adresse image (mais ne compte pas vraiment omme paramètre)
     
     call createImage
-    addl $12, %esp              # 3 param. x 4 octets = 12
+    addl $8, %esp              # 2 param. x 4 octets = 8 (et non 12 car 3e param compte pas)
 
     # TODO: Dessiner le triangle de Sierpinski avec la fonction récursive sierpinskiImage()
-    leal -12(%ebp), %eax        # eax = &imageCRT
     
     pushl color
+
+    leal -24(%ebp), %eax        # eax = &imageSierpinski
     pushl %eax                  # adresse de l'image
+
     pushl $1024                 # size (taille de l'image)
     pushl $0                    # y = 0
     pushl $0                    # x = 0
@@ -92,21 +94,19 @@ main:
     addl $20, %esp              # 5 paramètres x 4 bytes = 20
     
     # TODO: Sauvegarder cette image dans le fichier outputSierpinski avec saveImage()
-    leal -12(%ebp), %eax        # eax = &imageCRT
+    leal -24(%ebp), %eax        # eax = &imageSierpinski
     pushl %eax                  # 2e argument : pointeur vers img
     pushl $outputSierpinski     # 1er argument : filename
     call saveImage
     addl $8, %esp
 
     # TODO: Libérer la mémoire de vos images avec freeImage()
-    leal -12(%ebp), %eax
+    leal -24(%ebp), %eax
     pushl %eax                  # 1er argument : img
     call freeImage
     addl $4, %esp
 
-
-
     movl    $0, %eax
     # epilogue
     leave 
-    ret   
+    ret 
