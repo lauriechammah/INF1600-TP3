@@ -126,4 +126,3 @@ sierpinskiImage:
         
         leave 
         ret
-        
