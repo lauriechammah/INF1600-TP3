@@ -33,13 +33,13 @@ main:
     pushl   %ebp                      
     movl    %esp, %ebp                  
 
-    # subl $32, %esp              # alloué de l'espace pour deux images dès le début (2 x 12 octets)
+    subl $24, %esp              # alloué de l'espace pour deux images dès le début (2 x 12 octets)
                                 # Image CRT : -12(%ebp)
                                 # Image Triangle : -24(%ebp)
     #################### Filtre CRT #######################
 
     # TODO: Charger l'image inputCrt en appelant loadImage()
-    subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
+    # subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
 
     leal -12(%ebp), %eax        # eax = &imageCRT
     pushl %eax                  # 2e argument : pointeur vers img
@@ -73,13 +73,13 @@ main:
     # TODO: Créer une image vide de taille d'une puissance de 2 en appelant createImage()
     # Puisque createImage() retourne une struct Image, il faut d’abord allouer de l’espace sur la pile pour l’image, puit push l’adresse de cet espace comme 3e paramètre avant de call la fonction.
     
-    subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
+    # subl $12, %esp              # Allocation : struct Image = 3 ints = 12 octets
 
     leal -24(%ebp), %eax
-    # pushl %eax                  # 3eme argument : pointeur vers image
+    # pushl %eax
     pushl $1024                 # 2e paramètre : hauteur
     pushl $1024                 # 1e paramètre : largeur
-    pushl %eax                  # argument caché : adresse de l'image (de retour)
+    pushl %eax
     
     call createImage
     addl $12, %esp              # 3 param. x 4 octets = 12
@@ -88,7 +88,7 @@ main:
     movl color, %eax
     pushl %eax
 
-    leal -24(%ebp), %eax        # eax = &imageCRT
+    leal -24(%ebp), %eax        # eax = &imageSierpinski
     pushl %eax                  # adresse de l'image
 
     pushl $1024                 # size (taille de l'image)
