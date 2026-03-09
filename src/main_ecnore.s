@@ -82,7 +82,7 @@ main:
     pushl %eax
     
     call createImage
-    addl $12, %esp              # 3 param. x 4 octets = 12
+    addl $8, %esp              # 3 param. x 4 octets = 12
 
     # TODO: Dessiner le triangle de Sierpinski avec la fonction récursive sierpinskiImage()
     # movl color, %eax
@@ -99,7 +99,7 @@ main:
     addl $20, %esp              # 5 paramètres x 4 bytes = 20
     
     # TODO: Sauvegarder cette image dans le fichier outputSierpinski avec saveImage()
-    leal -24(%ebp), %eax        # eax = &imageCRT
+    leal -24(%ebp), %eax        # eax = &imageSierpinski
     pushl %eax                  # 2e argument : pointeur vers img
     pushl $outputSierpinski     # 1er argument : filename
     call saveImage
