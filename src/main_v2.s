@@ -114,3 +114,12 @@ main:
     # epilogue
     leave 
     ret 
+
+cat > /tmp/test.cpp << 'EOF'
+#include "../include/image.h"
+void test() {
+    Image img = createImage(1024, 1024);
+}
+EOF
+g++ -m32 -S -o /tmp/test.s /tmp/test.cpp -I include
+cat /tmp/test.s
