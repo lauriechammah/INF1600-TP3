@@ -104,15 +104,16 @@ sierpinskiImage:
         addl $20, %esp
         
         # Triangle du haut
+        movl %edi, %ecx         # ecx = x
         movl %ebx, %eax         # eax = half
         shrl $1, %eax           # eax = half / 2
-        addl %eax, %edi         # x += half / 2
+        addl %eax, %ecx         # x += half / 2
         
         pushl 24(%ebp)          # color
         pushl 20(%ebp)          # img
         pushl %ebx              # half
-        pushl 12(%ebp)              # y
-        pushl %edi              # x + half/2
+        pushl 12(%ebp)          # y
+        pushl %ecx              # x + half/2
         call sierpinskiImage
         addl $20, %esp
         
@@ -125,3 +126,4 @@ sierpinskiImage:
         
         leave 
         ret
+        
