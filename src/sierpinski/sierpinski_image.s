@@ -58,58 +58,63 @@ sierpinskiImage:
     jae fin
     
     # cas de base
-    cmp $1, %eax                    # si size == 1
-    jne recursion
+    cmp $1, %eax                    # regarde si size == 1
+    jne recursion                   # si non on va direct à recursion
+                                    # si oui on continu vers colorer
     
-    # colorer pixel si size = 1
-    # esi = img.pixels, y = ebx, x = edi
-    movl 24(%ebp), %ecx         # ecx = Pixel (r, g, b, a) = color
+    # colorer pixel (si size = 1)
+    # esi = img.pixels, ebx = y, edi = x
+    movl 24(%ebp), %ecx             # ecx = Pixel (r, g, b, a) = color
     
-    movl (%esi,%ebx,4), %esi    # esi = img.pixels[y]
-    leal (%esi,%edi,4), %esi    # esi = &img.pixels[y][x] (donc l'adresse du pixel)
+    movl (%esi,%ebx,4), %esi        # esi = img.pixels[y]
+    leal (%esi,%edi,4), %esi        # esi = &img.pixels[y][x] (donc l'adresse du pixel)
     
-    movl %ecx, (%esi)           # &img.pixels[y][x] = color
+    movl %ecx, (%esi)               # &img.pixels[y][x] = color
     jmp fin
 
     recursion:
         # diviser size
-        shrl $1, %eax           # eax / 2 (donc half = size / 2)
+        shrl $1, %eax               # eax / 2 (donc half = size / 2)
+        movl %eax, %ebx             # ebx = half
     
         # Triangle en bas à gauche
-        movl %ebx, %ecx         # ecx = y
-        addl %eax, %ecx         # y += half
+        movl 12(%ebp), %ecx         # ecx = y
+        addl %ebx, %ecx             # ecx = y + half
         
-        pushl 24(%ebp)          # color
-        pushl 20(%ebp)          # img
-        pushl %eax              # half
-        pushl %ecx              # y + half
-        pushl %edi              # x
+        pushl 24(%ebp)              # color
+        pushl 20(%ebp)              # img
+        pushl %ebx                  # half
+        pushl %ecx                  # y + half
+        pushl %edi                  # x
         call sierpinskiImage
-        addl $20, %esp          # 5 paramètres x 4 bytes = 20
+        addl $20, %esp              # 5 paramètres x 4 bytes = 20
         
         # Triangle en bas à droite
-        movl %edi, %edx         # edx = x
-        addl %eax, %edx         # x += half
+        movl %edi, %ecx             # ecx = x
+        addl %ebx, %ecx             # ecx = x + half
+
+        movl 12(%ebp), %eax         # eax = y
+        addl %ebx, %eax             # eax = y + half
         
-        pushl 24(%ebp)          # color
-        pushl 20(%ebp)          # img
-        pushl %eax              # half
-        pushl %ecx              # y + half
-        pushl %edx              # x + half
+        pushl 24(%ebp)              # color
+        pushl 20(%ebp)              # img
+        pushl %ebx                  # half
+        pushl %eax                  # y + half
+        pushl %ecx                  # x + half
         call sierpinskiImage
         addl $20, %esp
         
         # Triangle du haut
-        movl %eax, %ecx         # ecx = half
-        shrl $1, %ecx           # ecx = half / 2
-        movl %edi, %edx         # edx = x
-        addl %ecx, %edx         # x += half / 2
+        movl %edi, %ecx             # ecx = x
+        movl %ebx, %eax             # eax = half
+        shrl $1, %eax               # eax = half / 2
+        addl %eax, %ecx             # ecx = x + half / 2
         
-        pushl 24(%ebp)          # color
-        pushl 20(%ebp)          # img
-        pushl %eax              # half
-        pushl %ebx              # y
-        pushl %edx              # x + half/2
+        pushl 24(%ebp)              # color
+        pushl 20(%ebp)              # img
+        pushl %ebx                  # half
+        pushl 12(%ebp)              # y
+        pushl %ecx                  # x + half/2
         call sierpinskiImage
         addl $20, %esp
         
