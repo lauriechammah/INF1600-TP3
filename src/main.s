@@ -13,7 +13,7 @@
 .data 
 
 inputCrt: 
-    .asciz "images/johnpork.png"
+    .asciz "images/johnpork.png"   # source : https://soundcloud.com/euanalton/john-pork-is-calling
 
 outputCrt:
     .asciz "crt.png"
