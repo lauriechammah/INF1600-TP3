@@ -1,0 +1,34 @@
+.text
+main:
+ldi r0, 0 # charger a
+ld r1, (r0)
+ldi r0, 1 # charger b
+ld r2, (r0)
+ldi r0, 2 # charger addr
+ld r4, (r0)
+
+boucle:
+sub r3, r1, r2
+brz fin
+brlz updateb
+sub r1, r1, r2
+br boucle
+
+updateb:
+sub r3, r2, r1
+brz fin
+brlz boucle
+sub r2, r2, r1
+br boucle
+
+fin:
+ldi r0, pgcd # charger addr
+st (r0), r1
+stop
+
+
+
+.data
+a: 48
+b: 18
+pgcd: 0
