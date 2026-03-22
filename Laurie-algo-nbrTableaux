@@ -1,0 +1,22 @@
+.text
+ldi r0, resultat
+ld r1, (r0) # r1 = resultat
+ldi r2, tablenbr  # r2 = adr(tablenbr)
+ldi r3, 1 # constante 1
+
+# stocker l'adresse de fin
+ldi r6, resultat
+
+ldi r0, 0
+
+boucle:
+ld r4, (r2)
+add r1, r1, r4
+add r2, r2, r3
+# verifier si on est a la fin
+sub r5, r2, r6
+brlz boucle
+
+
+fin:
+stop
